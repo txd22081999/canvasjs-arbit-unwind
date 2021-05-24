@@ -26,6 +26,7 @@ const Scatter = () => {
   useEffect(() => {
     // const newChartData = PLOT_MIN.slice(0, 100).map((item) => {
     // const newChartData = PLOT.slice(0, 2000).map((item) => {
+    let maxY = 0
     const newChartData = PLOT.map((item) => {
       const time = item.time.split(':')
       const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
@@ -37,6 +38,11 @@ const Scatter = () => {
       const markerSize = item.radius
       // console.log(markerSize)
       //   const zValue = (1 * item.radius) ^ 2
+
+      if (item.y > maxY) {
+        maxY = item.y
+      }
+
       return {
         // x: item.x,
         x: newTime,
@@ -48,6 +54,8 @@ const Scatter = () => {
         time: item.time,
       }
     })
+
+    console.log(maxY)
     setChartData(newChartData)
     setOriginalChartData(newChartData)
 
@@ -71,16 +79,7 @@ const Scatter = () => {
 
     setVolumeData(volumeDataArr)
 
-    console.log(plotChartRef.current.chart)
-    console.log(plotChartRef.current.chart.axisX[0])
-    console.log(plotChartRef.current.chart.axisX[0].minimum)
-    console.log(plotChartRef.current.chart.axisX[0].maximum)
-    // console.log(chartRef.current.chart)
-    // chartRef.current.options.axisX.viewportMinimum = 1621395952058.8723
-    // chartRef.current.options.axisX.viewportMaximum = 1621398789365.2769
-    // chartRef.current.render()
-    // console.log(chartRef.current.options.axisX)
-    // console.log(chartRef.current.chart.bounds)
+    console.log(plotChartRef.current)
   }, [])
 
   //   useEffect(() => {
@@ -173,11 +172,36 @@ const Scatter = () => {
 
   console.log(barChartRef)
 
+  const onMouseMove = (e) => {
+    // if (!barChartRef) return
+    // console.log(e)
+    // const {
+    //   dataPoint: { x, y },
+    // } = e
+    // console.log(barChartRef)
+    // barChartRef.current.chart.axisX[0].crosshair.showAt(x)
+    // barChartRef.current.chart.axisY[0].crosshair.showAt(y)
+    // barChartRef.current.chart.axisX[0].crosshair.set('snapToDataPoint', true)
+    // barChartRef.current.chart.axisX[0].crosshair.set('x', x)
+    // barChartRef.current.chart.axisX[0].crosshair.set('y', y)
+    // console.log(barChartRef.current.chart.axisX[0])
+    // console.log(barChartRef.current.chart.axisX[0].crosshair)
+  }
+
+  const crosshairXMove = (e) => {
+    barChartRef.current.chart.axisX[0].crosshair.showAt(e.value)
+  }
+
+  const crosshairYMove = (e) => {
+    barChartRef.current.chart.axisY[0].crosshair.showAt((+e.value / 440) * 80)
+  }
+
   return (
     <div>
       {/* Plot chart */}
       <CanvasJSChart
         ref={plotChartRef}
+        id='chart-01'
         options={{
           title: {
             text: 'Scatter Plots',
@@ -191,6 +215,7 @@ const Scatter = () => {
             labelFontSize: AXIS_FONT_SIZE,
             crosshair: {
               enabled: true,
+              updated: crosshairXMove,
             },
             gridThickness: 0,
             // viewportMaximum: 100,
@@ -201,6 +226,7 @@ const Scatter = () => {
             labelFontSize: AXIS_FONT_SIZE,
             crosshair: {
               enabled: true,
+              updated: crosshairYMove,
             },
             gridThickness: 0,
           },
@@ -208,6 +234,7 @@ const Scatter = () => {
             {
               // type: 'bubble',
               type: 'line',
+              // mousemove: onMouseMove,
               toolTipContent: `<div class='tool-tip'><p>radius: {markerSize}</p><p>y: {y}</p></div>`,
               fillOpacity: 0,
               dataPoints: chartData,
@@ -221,6 +248,9 @@ const Scatter = () => {
               },
             },
           ],
+          // mousemove: (e) => {
+          //   console.log(e)
+          // },
           // rangeSelector: {
           //   height: 45, //Change it to 30
           //   inputFields: {
