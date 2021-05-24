@@ -10,7 +10,8 @@ const CanvasJSChart = CanvasJSReact.CanvasJSChart
 const VolumeChart = forwardRef((props, ref) => {
   const { dataPoints = [], viewport } = props
 
-  console.log(props)
+  // console.log(props)
+  console.log('render')
 
   const onMouseMove = (e) => {
     console.log(e)
@@ -31,11 +32,10 @@ const VolumeChart = forwardRef((props, ref) => {
               enabled: true,
             },
             gridThickness: 0,
-            // viewportMaximum: 100,
-            viewport: viewport,
+            viewportMinimum: viewport.viewportMinimum,
+            viewportMaximum: viewport.viewportMaximum,
           },
           axisY: {
-            // maximum: 800,
             labelFontSize: AXIS_FONT_SIZE,
             crosshair: {
               enabled: true,

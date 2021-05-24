@@ -162,9 +162,30 @@ const Scatter = () => {
     })
     // Replace previous datapoits of chart option
     setChartData(newDataPoints)
+
+    // console.log(barChartRef.current.chart.options.axisX.viewport)
+    console.log(e.axisX[0].viewportMinimum)
+    setViewport({
+      viewportMinimum: e.axisX[0].viewportMinimum,
+      viewportMaximum: e.axisX[0].viewportMaximum,
+    })
+
+    // barChartRef.current.chart.options.axisX.viewport = {
+    //   viewportMinimum: e.axisX[0].viewportMinimum,
+    //   viewportMaximum: e.axisX[0].viewportMaximum,
+    // }
+    // // barChartRef.current.chart.options.axisX.viewport.viewportMaximum =
+    // //   e.axisX[0].viewportMaximum
+    // barChartRef.current.render()
     // chart.options.data[0].dataPoints = [...newDataPoints]
     // chart.render()
   }
+
+  useEffect(() => {
+    console.log('Change view port')
+    console.log(barChartRef.current.chart)
+    barChartRef.current.chart.render()
+  }, [viewport])
 
   console.log(chartData[0])
   console.log(chartData[1])
