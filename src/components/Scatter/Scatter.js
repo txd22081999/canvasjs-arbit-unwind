@@ -1,63 +1,66 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { AXIS_FONT_SIZE } from '../../constants'
 import CanvasJSReact from '../../lib/canvasjs-3.2.17/canvasjs.react'
 import { PLOT_MIN, PLOT, getMedian } from '../../utils/'
 import VolumeChart from '../VolumeChart/VolumeChart'
+
+import {
+  updatePlotArbit,
+  updateBarArbit,
+  updateViewport,
+} from '../../features/global/globalSlice'
+
 import './Scatter.scss'
 
 const CanvasJS = CanvasJSReact.CanvasJS
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
 
 const Scatter = () => {
+  const viewport = useSelector((state) => state.global.viewport)
+  const plotArbit = useSelector((state) => state.global.plotArbit)
+  const barArbit = useSelector((state) => state.global.barArbit)
   const [chartData, setChartData] = useState([])
   const [originalChartData, setOriginalChartData] = useState([])
   const [selectedData, setSelectedData] = useState([])
   const plotChartRef = useRef(null)
   const barChartRef = useRef(null)
+  const dispatch = useDispatch()
 
   const [volumeData, setVolumeData] = useState([])
 
   const [fakeState, setFakeState] = useState(0)
-  const [viewport, setViewport] = useState({
-    viewportMinimum: 1621390598622.0627,
-    viewportMaximum: 1621409415869.5188,
-  })
+
+  // const [viewport, setViewport] = useState({
+  //   viewportMinimum: 1621390598622.0627,
+  //   viewportMaximum: 1621409415869.5188,
+  // })
 
   useEffect(() => {
     // const newChartData = PLOT_MIN.slice(0, 100).map((item) => {
     // const newChartData = PLOT.slice(0, 2000).map((item) => {
-    let maxY = 0
     const newChartData = PLOT.map((item) => {
       const time = item.time.split(':')
       const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
-      // const zValue = +Number.parseFloat(item.radius).toFixed(3)
-      // const zValue = 1 * item.radius
-      //   const zValue = +Number.parseFloat(item.radius)
       const z = item.radius ^ 0.5
       const zValue = +Number.parseFloat(item.radius).toFixed(3)
       const markerSize = item.radius
-      // console.log(markerSize)
-      //   const zValue = (1 * item.radius) ^ 2
-
-      if (item.y > maxY) {
-        maxY = item.y
-      }
 
       return {
-        // x: item.x,
         x: newTime,
         y: item.y,
-        // z: zValue,
-        // z: 1,
         markerSize,
         numLots: item.num_lots,
         time: item.time,
       }
     })
 
-    console.log(maxY)
-    setChartData(newChartData)
-    setOriginalChartData(newChartData)
+    dispatch(
+      updatePlotArbit({
+        originalData: newChartData,
+        data: newChartData,
+      })
+    )
 
     const newNumLotsData = newChartData.map(({ x, numLots }) => ({
       x,
@@ -75,16 +78,15 @@ const Scatter = () => {
       return accumulator
     }, [])
 
-    console.log(volumeDataArr)
-
-    setVolumeData(volumeDataArr)
-
-    console.log(plotChartRef.current)
+    dispatch(
+      updateBarArbit({
+        originalData: volumeDataArr,
+        data: volumeDataArr,
+      })
+    )
   }, [])
 
-  //   useEffect(() => {
-  //     // const found = chartData.filter((item) => item.y === 7)
-  //   }, [chartData])
+  console.log(plotArbit)
 
   const onPointClick = (e) => {
     console.log(e)
@@ -143,6 +145,10 @@ const Scatter = () => {
 
     const minOffset = e.axisX[0].viewportMinimum - viewport.viewportMinimum
     const maxOffset = viewport.viewportMaximum - e.axisX[0].viewportMaximum
+    // console.log(minOffset)
+    // console.log(maxOffset)
+    console.log(viewport)
+    console.log(viewport.viewportMaximum - viewport.viewportMinimum)
     const zoomValue =
       (maxOffset - minOffset) /
       (viewport.viewportMaximum - viewport.viewportMinimum)
@@ -153,7 +159,8 @@ const Scatter = () => {
     // chart.options.axisX.viewportMinimum = 1621390759252.8115
     // chart.options.axisX.viewportMaximum = 1621408934074.0244
     // chartRef.current.render()
-    const prevDataPoints = [...originalChartData]
+    const prevDataPoints = [...plotArbit.data]
+    console.log(prevDataPoints)
     const newDataPoints = prevDataPoints.map((point) => {
       return {
         ...point,
@@ -161,14 +168,22 @@ const Scatter = () => {
       }
     })
     // Replace previous datapoits of chart option
-    setChartData(newDataPoints)
+    // setChartData(newDataPoints)
+    dispatch(updatePlotArbit({ data: newDataPoints }))
 
     // console.log(barChartRef.current.chart.options.axisX.viewport)
     console.log(e.axisX[0].viewportMinimum)
-    setViewport({
-      viewportMinimum: e.axisX[0].viewportMinimum,
-      viewportMaximum: e.axisX[0].viewportMaximum,
-    })
+
+    dispatch(
+      updateViewport({
+        viewportMinimum: e.axisX[0].viewportMinimum,
+        viewportMaximum: e.axisX[0].viewportMaximum,
+      })
+    )
+    // setViewport({
+    //   viewportMinimum: e.axisX[0].viewportMinimum,
+    //   viewportMaximum: e.axisX[0].viewportMaximum,
+    // })
 
     // barChartRef.current.chart.options.axisX.viewport = {
     //   viewportMinimum: e.axisX[0].viewportMinimum,
@@ -258,7 +273,7 @@ const Scatter = () => {
               // mousemove: onMouseMove,
               toolTipContent: `<div class='tool-tip'><p>radius: {markerSize}</p><p>y: {y}</p></div>`,
               fillOpacity: 0,
-              dataPoints: chartData,
+              dataPoints: [...plotArbit.data],
               markerType: 'circle',
               // lineThickness: 0,
               lineColor: 'white',
@@ -313,7 +328,7 @@ const Scatter = () => {
 
       {/* Volume bar */}
       <VolumeChart
-        dataPoints={volumeData}
+        dataPoints={barArbit.data}
         viewport={viewport}
         ref={barChartRef}
       />
