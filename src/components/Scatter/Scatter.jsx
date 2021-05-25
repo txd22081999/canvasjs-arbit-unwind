@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AXIS_FONT_SIZE } from '../../constants'
 import CanvasJSReact from '../../lib/canvasjs-3.2.17/canvasjs.react'
-import { PLOT_MIN, PLOT, getMedian } from '../../utils/'
+import { PLOT_MIN, PLOT, getMedian } from '../../utils'
 import VolumeChart from '../VolumeChart/VolumeChart'
 
 import {
   updatePlotArbit,
   updateBarArbit,
   updateViewport,
+  updateRefs,
 } from '../../features/global/globalSlice'
 
 import './Scatter.scss'
@@ -16,7 +17,8 @@ import './Scatter.scss'
 const CanvasJS = CanvasJSReact.CanvasJS
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
 
-const Scatter = () => {
+const Scatter = (props) => {
+  const { rangeHandler } = props
   const viewport = useSelector((state) => state.global.viewport)
   const plotArbit = useSelector((state) => state.global.plotArbit)
   const barArbit = useSelector((state) => state.global.barArbit)
@@ -37,6 +39,11 @@ const Scatter = () => {
   // })
 
   useEffect(() => {
+    const { updateRef } = props
+    updateRef({ name: 'plotArbit', ref: plotChartRef })
+  }, [])
+
+  useEffect(() => {
     // const newChartData = PLOT_MIN.slice(0, 100).map((item) => {
     // const newChartData = PLOT.slice(0, 2000).map((item) => {
     const newChartData = PLOT.map((item) => {
@@ -44,7 +51,7 @@ const Scatter = () => {
       const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
       const z = item.radius ^ 0.5
       const zValue = +Number.parseFloat(item.radius).toFixed(3)
-      const markerSize = item.radius
+      const markerSize = Number.parseFloat(item.radius).toFixed(4)
 
       return {
         x: newTime,
@@ -119,94 +126,55 @@ const Scatter = () => {
     setChartData([...newDataPoints])
   }
 
-  const rangeHandler = (e) => {
-    // console.log(e)
-    if (e.trigger === 'reset') {
-      console.log('RESET')
-      setChartData(originalChartData)
-      // changeToPanMode();
-    }
-    if (e.trigger === 'pan') {
-      return
-      // changeToPanMode();
-    }
-    const { chart } = e
-    console.log(e)
-    console.log(
-      'type : ' +
-        e.type +
-        ', trigger : ' +
-        e.trigger +
-        ', AxisX viewportMininum : ' +
-        e.axisX[0].viewportMinimum +
-        ' AxisX viewportMaximum : ' +
-        e.axisX[0].viewportMaximum
-    )
+  // const rangeHandler = (e) => {
+  //   // console.log(e)
+  //   if (e.trigger === 'reset') {
+  //     console.log('RESET')
+  //     setChartData(originalChartData)
+  //     // changeToPanMode();
+  //   }
+  //   if (e.trigger === 'pan') {
+  //     return
+  //     // changeToPanMode();
+  //   }
+  //   const { chart } = e
+  //   console.log(e)
+  //   console.log(
+  //     'type : ' +
+  //       e.type +
+  //       ', trigger : ' +
+  //       e.trigger +
+  //       ', AxisX viewportMininum : ' +
+  //       e.axisX[0].viewportMinimum +
+  //       ' AxisX viewportMaximum : ' +
+  //       e.axisX[0].viewportMaximum
+  //   )
 
-    const minOffset = e.axisX[0].viewportMinimum - viewport.viewportMinimum
-    const maxOffset = viewport.viewportMaximum - e.axisX[0].viewportMaximum
-    // console.log(minOffset)
-    // console.log(maxOffset)
-    console.log(viewport)
-    console.log(viewport.viewportMaximum - viewport.viewportMinimum)
-    const zoomValue =
-      (maxOffset - minOffset) /
-      (viewport.viewportMaximum - viewport.viewportMinimum)
+  //   const minOffset = e.axisX[0].viewportMinimum - viewport.viewportMinimum
+  //   const maxOffset = viewport.viewportMaximum - e.axisX[0].viewportMaximum
 
-    console.log(zoomValue)
+  //   const zoomValue =
+  //     (maxOffset - minOffset) /
+  //     (viewport.viewportMaximum - viewport.viewportMinimum)
 
-    // chart.render()
-    // chart.options.axisX.viewportMinimum = 1621390759252.8115
-    // chart.options.axisX.viewportMaximum = 1621408934074.0244
-    // chartRef.current.render()
-    const prevDataPoints = [...plotArbit.data]
-    console.log(prevDataPoints)
-    const newDataPoints = prevDataPoints.map((point) => {
-      return {
-        ...point,
-        markerSize: point.markerSize * (1 + Math.abs(zoomValue)),
-      }
-    })
-    // Replace previous datapoits of chart option
-    // setChartData(newDataPoints)
-    dispatch(updatePlotArbit({ data: newDataPoints }))
+  //   const prevDataPoints = [...plotArbit.data]
+  //   console.log(prevDataPoints)
+  //   const newDataPoints = prevDataPoints.map((point) => {
+  //     return {
+  //       ...point,
+  //       markerSize: point.markerSize * (1 + Math.abs(zoomValue)),
+  //     }
+  //   })
+  //   // Replace previous datapoits of chart option
+  //   dispatch(updatePlotArbit({ data: newDataPoints }))
 
-    // console.log(barChartRef.current.chart.options.axisX.viewport)
-    console.log(e.axisX[0].viewportMinimum)
-
-    dispatch(
-      updateViewport({
-        viewportMinimum: e.axisX[0].viewportMinimum,
-        viewportMaximum: e.axisX[0].viewportMaximum,
-      })
-    )
-    // setViewport({
-    //   viewportMinimum: e.axisX[0].viewportMinimum,
-    //   viewportMaximum: e.axisX[0].viewportMaximum,
-    // })
-
-    // barChartRef.current.chart.options.axisX.viewport = {
-    //   viewportMinimum: e.axisX[0].viewportMinimum,
-    //   viewportMaximum: e.axisX[0].viewportMaximum,
-    // }
-    // // barChartRef.current.chart.options.axisX.viewport.viewportMaximum =
-    // //   e.axisX[0].viewportMaximum
-    // barChartRef.current.render()
-    // chart.options.data[0].dataPoints = [...newDataPoints]
-    // chart.render()
-  }
-
-  useEffect(() => {
-    console.log('Change view port')
-    console.log(barChartRef.current.chart)
-    barChartRef.current.chart.render()
-  }, [viewport])
-
-  console.log(chartData[0])
-  console.log(chartData[1])
-  console.log(chartData.length)
-
-  console.log(barChartRef)
+  //   dispatch(
+  //     updateViewport({
+  //       viewportMinimum: e.axisX[0].viewportMinimum,
+  //       viewportMaximum: e.axisX[0].viewportMaximum,
+  //     })
+  //   )
+  // }
 
   const onMouseMove = (e) => {
     // if (!barChartRef) return
@@ -225,10 +193,12 @@ const Scatter = () => {
   }
 
   const crosshairXMove = (e) => {
+    if (!barChartRef.current) return
     barChartRef.current.chart.axisX[0].crosshair.showAt(e.value)
   }
 
   const crosshairYMove = (e) => {
+    if (!barChartRef.current) return
     barChartRef.current.chart.axisY[0].crosshair.showAt((+e.value / 440) * 80)
   }
 
@@ -268,16 +238,14 @@ const Scatter = () => {
           },
           data: [
             {
-              // type: 'bubble',
               type: 'line',
               // mousemove: onMouseMove,
-              toolTipContent: `<div class='tool-tip'><p>radius: {markerSize}</p><p>y: {y}</p></div>`,
+              toolTipContent: `<div class='tool-tip'><p>r: {markerSize}</p><p>y: {y}</p></div>`,
               fillOpacity: 0,
               dataPoints: [...plotArbit.data],
               markerType: 'circle',
               // lineThickness: 0,
               lineColor: 'white',
-              //   dataPoints: sampleDatPoints,
               color: 'rgb(162, 162, 255)',
               click: (e) => {
                 onPointClick(e)
@@ -327,11 +295,7 @@ const Scatter = () => {
       </div>
 
       {/* Volume bar */}
-      <VolumeChart
-        dataPoints={barArbit.data}
-        viewport={viewport}
-        ref={barChartRef}
-      />
+      {/* <VolumeChart ref={barChartRef} /> */}
 
       {/* <CanvasJSChart
         options={{

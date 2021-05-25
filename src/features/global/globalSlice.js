@@ -3,6 +3,10 @@ import { createSlice } from '@reduxjs/toolkit'
 export const globalSlice = createSlice({
   name: 'global',
   initialState: {
+    refs: {
+      plotArbit: null,
+      barArbit: null,
+    },
     viewport: {
       viewportMinimum: 1621390598622.0627,
       viewportMaximum: 1621409415869.5188,
@@ -23,6 +27,17 @@ export const globalSlice = createSlice({
   reducers: {
     incrementByAmount: (state, action) => {
       state.value += action.payload
+    },
+
+    updateRefs: (state, action) => {
+      const { payload } = action
+      console.log(payload)
+      console.log({ [payload.name]: payload.ref })
+      // state.refs = [...payload.refs]
+      state.refs = {
+        // ...state.refs,
+        [payload.name]: JSON.stringify(payload.ref),
+      }
     },
 
     updatePlotArbit: (state, action) => {
@@ -93,6 +108,7 @@ export const {
   updatePlotArbit,
   updateBarArbit,
   updateViewport,
+  updateRefs,
 } = globalSlice.actions
 
 export default globalSlice.reducer
