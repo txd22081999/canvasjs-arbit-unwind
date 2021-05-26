@@ -1,6 +1,10 @@
 import React, { useState, useEffect, forwardRef, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { AXIS_FONT_SIZE } from '../../constants'
+import {
+  ARBIT_PLOT_COLOR,
+  AXIS_FONT_SIZE,
+  ARBIT_BAR_COLOR,
+} from '../../constants'
 import CanvasJSReact from '../../lib/canvasjs-3.2.17/canvasjs.react'
 import { PLOT_MIN, PLOT, getMedian } from '../../utils'
 import './VolumeChart.scss'
@@ -70,7 +74,7 @@ const VolumeChart = forwardRef((props, ref) => {
               toolTipContent: `<div class='tool-tip'><p>num_lots: {y}</p></div>`,
               // fillOpacity: 0,
               dataPoints: [...barArbit.data],
-              color: 'rgb(162, 162, 255)',
+              color: ARBIT_BAR_COLOR,
               // click: (e) => {
               //   onPointClick(e)
               // },

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { AXIS_FONT_SIZE } from '../../constants'
+import { ARBIT_PLOT_COLOR, AXIS_FONT_SIZE } from '../../constants'
 import CanvasJSReact from '../../lib/canvasjs-3.2.17/canvasjs.react'
 import { PLOT_MIN, PLOT, getMedian } from '../../utils'
 import VolumeChart from '../VolumeChart/VolumeChart'
@@ -147,10 +147,10 @@ const Scatter = (props) => {
         ref={plotChartRef}
         id='chart-01'
         options={{
-          title: {
-            text: 'Scatter Plots',
-            fontSize: 30,
-          },
+          // title: {
+          //   text: 'Scatter Plots',
+          //   fontSize: 30,
+          // },
           height: 700,
           interactivityEnabled: true,
           zoomEnabled: true,
@@ -184,7 +184,7 @@ const Scatter = (props) => {
               markerType: 'circle',
               // lineThickness: 0,
               lineColor: 'white',
-              color: 'rgb(162, 162, 255)',
+              color: ARBIT_PLOT_COLOR,
               click: (e) => {
                 onPointClick(e)
               },
@@ -269,7 +269,6 @@ const Scatter = (props) => {
           },
         }}
       /> */}
-      <p>Hello</p>
     </div>
   )
 }

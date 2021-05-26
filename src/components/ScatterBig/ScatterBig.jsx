@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { AXIS_FONT_SIZE } from '../../constants'
+import { ARBIT_PLOT_COLOR, AXIS_FONT_SIZE } from '../../constants'
 import CanvasJSReact from '../../lib/canvasjs-3.2.17/canvasjs.react'
 import { PLOT_MIN, PLOT, getMedian } from '../../utils'
 import VolumeChart from '../VolumeChart/VolumeChart'
@@ -124,11 +124,11 @@ const ScatterBig = (props) => {
         ref={plotArbitBigRef}
         id='chart-03'
         options={{
-          title: {
-            text: 'Scatter Plots',
-            fontSize: 30,
-          },
-          height: 400,
+          // title: {
+          //   text: 'Scatter Plots',
+          //   fontSize: 30,
+          // },
+          height: 300,
           interactivityEnabled: true,
           zoomEnabled: true,
           axisX: {
@@ -161,7 +161,7 @@ const ScatterBig = (props) => {
               markerType: 'circle',
               // lineThickness: 0,
               lineColor: 'white',
-              color: 'rgb(162, 162, 255)',
+              color: ARBIT_PLOT_COLOR,
               click: (e) => {
                 onPointClick(e)
               },
@@ -171,7 +171,7 @@ const ScatterBig = (props) => {
           // rangeChanged: rangeHandler,
         }}
       />
-      <div className='info'>
+      {/* <div className='info'>
         <table>
           <thead>
             <tr>
@@ -182,7 +182,7 @@ const ScatterBig = (props) => {
             </tr>
           </thead>
 
-          {/* <tbody>
+          <tbody>
             {global.plotArbit.selectedData.length > 0 &&
               global.plotArbit.selectedData.map(
                 ({ totalDataPoints, totalNumLots, time, median }) => {
@@ -196,9 +196,9 @@ const ScatterBig = (props) => {
                   )
                 }
               )}
-          </tbody> */}
+          </tbody>
         </table>
-      </div>
+      </div> */}
     </div>
   )
 }
