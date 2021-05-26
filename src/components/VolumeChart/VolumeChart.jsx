@@ -10,11 +10,11 @@ const CanvasJSChart = CanvasJSReact.CanvasJSChart
 
 const VolumeChart = forwardRef((props, ref) => {
   // const { dataPoints = [], viewport } = props
-  const viewport = useSelector((state) => state.global.viewport)
-  const barArbit = useSelector((state) => state.global.barArbit)
+  const global = useSelector((state) => state.global)
+  const { viewport, barArbit, plotArbit } = global
   const barArbitChartRef = useRef(null)
 
-  const { rangeHandler } = props
+  const { rangeHandler, crosshairXMove, crosshairYMove } = props
 
   // console.log(props)
   console.log('render')
@@ -34,7 +34,7 @@ const VolumeChart = forwardRef((props, ref) => {
         // ref={ref}
         ref={barArbitChartRef}
         options={{
-          height: 300,
+          height: 100,
           // interactivityEnabled: true,
           zoomEnabled: true,
           // height: 700,
@@ -42,7 +42,10 @@ const VolumeChart = forwardRef((props, ref) => {
             labelFontSize: AXIS_FONT_SIZE,
             crosshair: {
               enabled: true,
-              showAt: 1621396741826.3198,
+              // showAt: 1621396741826.3198,
+              updated: (e) => {
+                crosshairXMove(e)
+              },
             },
             gridThickness: 0,
             viewportMinimum: viewport.viewportMinimum,
@@ -50,8 +53,12 @@ const VolumeChart = forwardRef((props, ref) => {
           },
           axisY: {
             labelFontSize: AXIS_FONT_SIZE,
+            maximum: barArbit.maxY,
             crosshair: {
               enabled: true,
+              updated: (e) => {
+                crosshairYMove(e, barArbit.maxY)
+              },
             },
             gridThickness: 0,
           },

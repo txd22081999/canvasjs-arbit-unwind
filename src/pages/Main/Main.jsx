@@ -2,6 +2,7 @@ import React, { useEffect, useRef, createRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Scatter from '../../components/Scatter'
+import ScatterBig from '../../components/ScatterBig'
 import VolumeChart from '../../components/VolumeChart'
 
 import {
@@ -13,11 +14,12 @@ import {
 const Main = () => {
   const dispatch = useDispatch()
   const global = useSelector((state) => state.global)
-  const { plotArbit, barArbit, viewport } = global
+  const { plotArbit, barArbit, plotArbitBig, viewport } = global
   // const refs = useSelector((state) => state.global.refs)
   const [refArr, setRefArr] = useState({
     plotArbit: null,
     barArbit: null,
+    plotArbitBig: null,
   })
 
   const ref1 = useRef(null)
@@ -84,6 +86,33 @@ const Main = () => {
     )
   }
 
+  const crosshairXMove = (e) => {
+    // if (!ref1.current) return
+    // console.log(ref1.current)
+    // ref1.current.chart.axisX[0].crosshair.showAt(e.value)
+    if (!refArr.barArbit || !refArr.barArbit.current) return
+    // console.log(refArr.barArbit.current)
+    refArr.barArbit.current.chart.axisX[0].crosshair.showAt(e.value)
+    refArr.plotArbit.current.chart.axisX[0].crosshair.showAt(e.value)
+    refArr.plotArbitBig.current.chart.axisX[0].crosshair.showAt(e.value)
+  }
+
+  const crosshairYMove = (e, max) => {
+    // if (!ref1.current) return
+    // console.log(ref1.current)
+    // ref1.current.chart.axisX[0].crosshair.showAt(e.value)
+    if (!refArr.barArbit.current) return
+    refArr.barArbit.current.chart.axisY[0].crosshair.showAt(
+      (e.value / max) * barArbit.maxY
+    )
+    refArr.plotArbit.current.chart.axisY[0].crosshair.showAt(
+      (e.value / max) * plotArbit.maxY
+    )
+    refArr.plotArbitBig.current.chart.axisY[0].crosshair.showAt(
+      (e.value / max) * plotArbitBig.maxY
+    )
+  }
+
   return (
     <div>
       {/* <button
@@ -102,12 +131,27 @@ const Main = () => {
       >
         Hello
       </button> */}
-      <Scatter updateRef={updateRef} rangeHandler={rangeHandler} />
+      <Scatter
+        updateRef={updateRef}
+        rangeHandler={rangeHandler}
+        crosshairXMove={crosshairXMove}
+        crosshairYMove={crosshairYMove}
+        barArbitRef={refArr.barArbit}
+      />
       {/* <VolumeChart /> */}
       <VolumeChart
         // ref={ref1}
         updateRef={updateRef}
+        crosshairXMove={crosshairXMove}
+        crosshairYMove={crosshairYMove}
         rangeHandler={rangeHandler}
+      />
+      <ScatterBig
+        updateRef={updateRef}
+        rangeHandler={rangeHandler}
+        crosshairXMove={crosshairXMove}
+        crosshairYMove={crosshairYMove}
+        barArbitRef={refArr.barArbit}
       />
     </div>
   )

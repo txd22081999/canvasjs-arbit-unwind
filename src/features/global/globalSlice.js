@@ -14,12 +14,20 @@ export const globalSlice = createSlice({
     plotArbit: {
       originalData: [],
       data: [],
+      selectedData: [],
       minY: 0,
       maxY: 0,
     },
     barArbit: {
       originalData: [],
       data: [],
+      minY: 0,
+      maxY: 0,
+    },
+    plotArbitBig: {
+      originalData: [],
+      data: [],
+      selectedData: [],
       minY: 0,
       maxY: 0,
     },
@@ -53,6 +61,26 @@ export const globalSlice = createSlice({
       )
 
       state.plotArbit = {
+        ...state.plotArbit,
+        ...payload,
+        minY,
+        maxY,
+      }
+    },
+
+    updatePlotArbitBig: (state, action) => {
+      const { payload } = action
+      const minY = Math.min.apply(
+        null,
+        payload.data.map(({ y }) => y)
+      )
+
+      const maxY = Math.max.apply(
+        null,
+        payload.data.map(({ y }) => y)
+      )
+
+      state.plotArbitBig = {
         ...state.plotArbit,
         ...payload,
         minY,
@@ -106,6 +134,7 @@ export const globalSlice = createSlice({
 export const {
   incrementByAmount,
   updatePlotArbit,
+  updatePlotArbitBig,
   updateBarArbit,
   updateViewport,
   updateRefs,

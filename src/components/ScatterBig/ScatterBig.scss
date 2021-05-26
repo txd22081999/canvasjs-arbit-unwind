@@ -1,0 +1,47 @@
+a {
+  color: rgb(162, 162, 255);
+}
+
+.info {
+  margin-top: 30px;
+  margin-left: 50px;
+}
+
+.info-item {
+  display: flex;
+
+  span:first-child {
+    margin-right: 50px;
+  }
+}
+
+table,
+th,
+td {
+  padding: 10px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.tool-tip {
+  margin: 0;
+  padding: 0;
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+// .canvasjs-chart-container {
+//   // height: fit-content;
+//   height: 100%;
+// }
+
+#canvasjs-react-chart-container-1 {
+  height: 1000px;
+}
+
+// .canvasjs-chart-credit {
+//   display: none;
+// }
