@@ -1,5 +1,8 @@
+import moment from 'moment'
+
 export * from './plot-min'
 export * from './plot'
+export * from './unwind'
 
 export const getMedian = (values) => {
   if (values.length === 0) return 0
@@ -27,3 +30,18 @@ export const sampleDatPoints = [
   { x: 80, y: 34, z: 5 },
   { x: 90, y: 14, z: 6 },
 ]
+
+export const addSecond = (inputTime, seconds = 1) => {
+  const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss'
+  let newTime, input
+  if (typeof inputTime === 'object') {
+    input = inputTime
+  } else {
+    // const a = moment(`2021-05-27 09:41:40`, momentFormat)
+    let time = moment(`2021-05-27 ${inputTime}`, dateTimeFormat)
+    input = time
+  }
+  newTime = input.add({ seconds })
+  newTime = moment(newTime.format(dateTimeFormat))
+  return newTime
+}

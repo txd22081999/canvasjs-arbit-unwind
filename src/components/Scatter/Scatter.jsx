@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { AXIS_FONT_SIZE } from '../../constants'
+import { AXIS_FONT_SIZE, PLOT_ARBIT_COLOR } from '../../constants'
 import CanvasJSReact from '../../lib/canvasjs-3.2.17/canvasjs.react'
-import { PLOT_MIN, PLOT, getMedian } from '../../utils'
+import { PLOT_MIN, PLOT, getMedian, UNWIND } from '../../utils'
 import VolumeChart from '../VolumeChart/VolumeChart'
 
 import {
@@ -14,6 +14,9 @@ import {
 } from '../../features/global/globalSlice'
 
 import './Scatter.scss'
+import moment from 'moment'
+
+// console.log(UNWIND)
 
 const CanvasJS = CanvasJSReact.CanvasJS
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
@@ -35,8 +38,9 @@ const Scatter = (props) => {
 
   useEffect(() => {
     // const newChartData = PLOT_MIN.slice(0, 100).map((item) => {
-    // const newChartData = PLOT.slice(0, 2000).map((item) => {
-    const newChartData = PLOT.map((item) => {
+    // const newChartData = PLOT.slice(0, 2000).map((item) => {]
+    console.log(UNWIND.circles)
+    const newChartData = UNWIND.circles.map((item) => {
       const time = item.time.split(':')
       const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
       const z = item.radius ^ 0.5
@@ -52,10 +56,16 @@ const Scatter = (props) => {
       }
     })
 
+    const timeArr = newChartData.map(({ x }) => x)
+    const minX = new Date(Math.min.apply(null, timeArr))
+    const maxX = new Date(Math.max.apply(null, timeArr))
+
     dispatch(
       updatePlotArbit({
         originalData: newChartData,
         data: newChartData,
+        minX,
+        maxX,
       })
     )
 
@@ -64,25 +74,36 @@ const Scatter = (props) => {
       y: 1,
     }))
 
-    console.log(newNumLotsData)
-    const volumeDataArr = newNumLotsData.reduce((accumulator, current) => {
-      const found = accumulator.find((elem) => {
-        return +elem.x === +current.x
-      })
-      if (found) found.y += current.y
-      else accumulator.push(current)
-      return accumulator
-    }, [])
+    const volumeDataArr = UNWIND.predictions.map(
+      ({ time: timeInput, num_lots }) => {
+        const time = timeInput.split(':')
+        const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
+        return { x: newTime, y: num_lots }
+      }
+    )
+    // volumeDataArr.map(({x}) => x)
+
+    // const volumeDataArr = newNumLotsData.reduce((accumulator, current) => {
+    //   const found = accumulator.find((elem) => {
+    //     return +elem.x === +current.x
+    //   })
+    //   if (found) found.y += current.y
+    //   else accumulator.push(current)
+    //   return accumulator
+    // }, [])
+
+    console.log(minX)
+    console.log(maxX)
 
     dispatch(
       updateBarArbit({
         originalData: volumeDataArr,
         data: volumeDataArr,
+        minX,
+        maxX,
       })
     )
   }, [])
-
-  console.log(plotArbit)
 
   const onPointClick = (e) => {
     const {
@@ -139,18 +160,16 @@ const Scatter = (props) => {
 
   const onMouseMove = (e) => {}
 
-  console.log(viewport)
-
   return (
     <div>
       <CanvasJSChart
         ref={plotChartRef}
         id='chart-01'
         options={{
-          title: {
-            text: 'Scatter Plots',
-            fontSize: 30,
-          },
+          // title: {
+          //   text: 'Scatter Plots',
+          //   fontSize: 30,
+          // },
           height: 700,
           interactivityEnabled: true,
           zoomEnabled: true,
@@ -184,7 +203,7 @@ const Scatter = (props) => {
               markerType: 'circle',
               // lineThickness: 0,
               lineColor: 'white',
-              color: 'rgb(162, 162, 255)',
+              color: PLOT_ARBIT_COLOR,
               click: (e) => {
                 onPointClick(e)
               },
@@ -269,7 +288,6 @@ const Scatter = (props) => {
           },
         }}
       /> */}
-      <p>Hello</p>
     </div>
   )
 }

@@ -24,8 +24,8 @@ const Main = () => {
 
   const ref1 = useRef(null)
 
-  console.log('Main render')
-  console.log(ref1)
+  // console.log('Main render')
+  // console.log(ref1)
 
   const updateRef = ({ name, ref }) => {
     setRefArr((prevRefArr) => {
@@ -101,7 +101,7 @@ const Main = () => {
     // if (!ref1.current) return
     // console.log(ref1.current)
     // ref1.current.chart.axisX[0].crosshair.showAt(e.value)
-    if (!refArr.barArbit.current) return
+    if (!refArr.barArbit) return
     refArr.barArbit.current.chart.axisY[0].crosshair.showAt(
       (e.value / max) * barArbit.maxY
     )
@@ -138,7 +138,6 @@ const Main = () => {
         crosshairYMove={crosshairYMove}
         barArbitRef={refArr.barArbit}
       />
-      {/* <VolumeChart /> */}
       <VolumeChart
         // ref={ref1}
         updateRef={updateRef}

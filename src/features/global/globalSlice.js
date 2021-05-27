@@ -17,12 +17,16 @@ export const globalSlice = createSlice({
       selectedData: [],
       minY: 0,
       maxY: 0,
+      minX: 0,
+      maxX: 0,
     },
     barArbit: {
       originalData: [],
       data: [],
       minY: 0,
       maxY: 0,
+      minX: 0,
+      maxX: 0,
     },
     plotArbitBig: {
       originalData: [],
@@ -30,6 +34,8 @@ export const globalSlice = createSlice({
       selectedData: [],
       minY: 0,
       maxY: 0,
+      minX: 0,
+      maxX: 0,
     },
   },
   reducers: {
