@@ -22,6 +22,16 @@ export const globalSlice = createSlice({
     },
     barArbit: {
       originalData: [],
+      selectedData: [],
+      data: [],
+      minY: 0,
+      maxY: 0,
+      minX: 0,
+      maxX: 0,
+    },
+    pairVol: {
+      originalData: [],
+      selectedData: [],
       data: [],
       minY: 0,
       maxY: 0,
@@ -37,6 +47,7 @@ export const globalSlice = createSlice({
       minX: 0,
       maxX: 0,
     },
+    summary: {},
   },
   reducers: {
     incrementByAmount: (state, action) => {
@@ -107,6 +118,9 @@ export const globalSlice = createSlice({
         payload.data.map(({ y }) => y)
       )
 
+      console.log(minY)
+      console.log(maxY)
+
       state.barArbit = {
         ...state.barArbit,
         ...payload,
@@ -121,6 +135,39 @@ export const globalSlice = createSlice({
         ...state.viewport,
         ...payload,
       }
+    },
+
+    updatePairVol: (state, action) => {
+      const { payload } = action
+
+      const minY = Math.min.apply(
+        null,
+        payload.data.map(({ y }) => y)
+      )
+
+      const maxY = Math.max.apply(
+        null,
+        payload.data.map(({ y }) => y)
+      )
+
+      console.log(payload.data)
+
+      console.log(minY)
+      console.log(maxY)
+
+      state.pairVol = {
+        ...state.pairVol,
+        ...payload,
+        minY,
+        maxY,
+      }
+    },
+
+    updateSummary: (state, action) => {
+      const { payload } = action
+
+      console.log(payload)
+      state.summary = { ...payload }
     },
 
     // increment: (state) => {
@@ -143,7 +190,9 @@ export const {
   updatePlotArbitBig,
   updateBarArbit,
   updateViewport,
+  updatePairVol,
   updateRefs,
+  updateSummary,
 } = globalSlice.actions
 
 export default globalSlice.reducer

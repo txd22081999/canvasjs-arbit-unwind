@@ -45,3 +45,7 @@ export const addSecond = (inputTime, seconds = 1) => {
   newTime = moment(newTime.format(dateTimeFormat))
   return newTime
 }
+
+export const labelFormatter = (e) => {
+  return moment(e.value).format('HH:MM')
+}

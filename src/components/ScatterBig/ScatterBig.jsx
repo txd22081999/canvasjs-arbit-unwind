@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AXIS_FONT_SIZE, PLOT_ARBIT_COLOR } from '../../constants'
 import CanvasJSReact from '../../lib/canvasjs-3.2.17/canvasjs.react'
-import { PLOT_MIN, PLOT, getMedian, UNWIND } from '../../utils'
+import { PLOT_MIN, PLOT, getMedian, UNWIND, labelFormatter } from '../../utils'
 import VolumeChart from '../VolumeChart/VolumeChart'
 
 import {
@@ -11,6 +11,7 @@ import {
   updateViewport,
   updateRefs,
   updatePlotArbitBig,
+  updatePairVol,
 } from '../../features/global/globalSlice'
 
 import './ScatterBig.scss'
@@ -66,11 +67,15 @@ const ScatterBig = (props) => {
       dataPoint: { x, y, z, time },
     } = e
 
-    const newDataPoints = dataPoints.filter((item) => +item.x !== +x)
+    const newDataPoints = global.plotArbit.data.filter((item) => +item.x !== +x)
     const newBigDataPoints = global.plotArbitBig.data.filter(
       (item) => +item.x !== +x
     )
     const newBarArbitData = [...global.barArbit.data].filter(
+      (item) => +item.x !== +x
+    )
+
+    const newPairVolData = [...global.pairVol.data].filter(
       (item) => +item.x !== +x
     )
 
@@ -112,6 +117,11 @@ const ScatterBig = (props) => {
         data: newBarArbitData,
       })
     )
+    dispatch(
+      updatePairVol({
+        data: newPairVolData,
+      })
+    )
   }
 
   const onMouseMove = (e) => {}
@@ -126,10 +136,11 @@ const ScatterBig = (props) => {
           //   text: 'Scatter Plots',
           //   fontSize: 30,
           // },
-          height: 400,
+          height: 250,
           interactivityEnabled: true,
           zoomEnabled: true,
           axisX: {
+            labelFormatter,
             labelFontSize: AXIS_FONT_SIZE,
             crosshair: {
               enabled: true,
@@ -166,7 +177,7 @@ const ScatterBig = (props) => {
             },
           ],
 
-          // rangeChanged: rangeHandler,
+          rangeChanged: rangeHandler,
         }}
       />
     </div>

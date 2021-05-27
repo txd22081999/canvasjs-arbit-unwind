@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { AXIS_FONT_SIZE, PLOT_ARBIT_COLOR } from '../../constants'
+import {
+  AXIS_FONT_SIZE,
+  GREEN_PLOT_COLOR,
+  PLOT_ARBIT_COLOR,
+} from '../../constants'
 import CanvasJSReact from '../../lib/canvasjs-3.2.17/canvasjs.react'
-import { PLOT_MIN, PLOT, getMedian, UNWIND } from '../../utils'
+import { PLOT_MIN, PLOT, getMedian, UNWIND, labelFormatter } from '../../utils'
 import VolumeChart from '../VolumeChart/VolumeChart'
 
 import {
@@ -11,10 +15,13 @@ import {
   updateViewport,
   updateRefs,
   updatePlotArbitBig,
+  updatePairVol,
+  updateSummary,
 } from '../../features/global/globalSlice'
 
 import './Scatter.scss'
 import moment from 'moment'
+import SelectTable from '../SelectTable'
 
 // console.log(UNWIND)
 
@@ -53,6 +60,8 @@ const Scatter = (props) => {
         markerSize,
         numLots: item.num_lots,
         time: item.time,
+        // counted: item.counted,
+        color: item.counted ? '' : GREEN_PLOT_COLOR,
       }
     })
 
@@ -81,6 +90,14 @@ const Scatter = (props) => {
         return { x: newTime, y: num_lots }
       }
     )
+
+    const pairVolDataArr = UNWIND.pair_count.map(
+      ({ time: timeInput, num_lots }) => {
+        const time = timeInput.split(':')
+        const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
+        return { x: newTime, y: num_lots }
+      }
+    )
     // volumeDataArr.map(({x}) => x)
 
     // const volumeDataArr = newNumLotsData.reduce((accumulator, current) => {
@@ -103,6 +120,16 @@ const Scatter = (props) => {
         maxX,
       })
     )
+
+    dispatch(
+      updatePairVol({
+        originalData: pairVolDataArr,
+        data: pairVolDataArr,
+        minX,
+        maxX,
+      })
+    )
+    dispatch(updateSummary(UNWIND.summary))
   }, [])
 
   const onPointClick = (e) => {
@@ -113,6 +140,10 @@ const Scatter = (props) => {
 
     const newDataPoints = dataPoints.filter((item) => +item.x !== +x)
     const newBigArbitDataPoints = [...global.plotArbitBig.data].filter(
+      (item) => +item.x !== +x
+    )
+
+    const newPairVolDataPoints = [...global.pairVol.data].filter(
       (item) => +item.x !== +x
     )
     const newBarArbitData = [...global.barArbit.data].filter(
@@ -156,6 +187,12 @@ const Scatter = (props) => {
         selectedData: [...global.plotArbitBig.selectedData, newData],
       })
     )
+    dispatch(
+      updatePairVol({
+        data: newPairVolDataPoints,
+        selectedData: [...global.pairVol.selectedData, newData],
+      })
+    )
   }
 
   const onMouseMove = (e) => {}
@@ -170,7 +207,7 @@ const Scatter = (props) => {
           //   text: 'Scatter Plots',
           //   fontSize: 30,
           // },
-          height: 700,
+          height: 500,
           interactivityEnabled: true,
           zoomEnabled: true,
           axisX: {
@@ -179,6 +216,7 @@ const Scatter = (props) => {
               enabled: true,
               updated: crosshairXMove,
             },
+            labelFormatter,
             gridThickness: 0,
             viewportMinimum: viewport.viewportMinimum,
             viewportMaximum: viewport.viewportMaximum,
@@ -222,34 +260,6 @@ const Scatter = (props) => {
           rangeChanged: rangeHandler,
         }}
       />
-      <div className='info'>
-        <table>
-          <thead>
-            <tr>
-              <th>total_data_points</th>
-              <th>total_data_num_lots</th>
-              <th>median</th>
-              <th>time</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {global.plotArbit.selectedData.length > 0 &&
-              global.plotArbit.selectedData.map(
-                ({ totalDataPoints, totalNumLots, time, median }) => {
-                  return (
-                    <tr>
-                      <td>{totalDataPoints}</td>
-                      <td>{totalNumLots}</td>
-                      <td>{median}</td>
-                      <td>{time}</td>
-                    </tr>
-                  )
-                }
-              )}
-          </tbody>
-        </table>
-      </div>
 
       {/* Volume bar */}
       {/* <VolumeChart ref={barChartRef} /> */}
