@@ -6,6 +6,7 @@ import Scatter from '../../components/Scatter'
 import ScatterBig from '../../components/ScatterBig'
 import SelectTable from '../../components/SelectTable'
 import VolumeChart from '../../components/VolumeChart'
+import { VIEWPORT_MAXIMUM, VIEWPORT_MINIMUM } from '../../constants'
 
 import {
   updateRefs,
@@ -29,9 +30,6 @@ const Main = () => {
 
   const ref1 = useRef(null)
 
-  // console.log('Main render')
-  // console.log(ref1)
-
   const updateRef = ({ name, ref }) => {
     setRefArr((prevRefArr) => {
       return {
@@ -42,46 +40,27 @@ const Main = () => {
   }
 
   const rangeHandler = (e) => {
-    // console.log(e)
-    console.log(e)
+    const { chart } = e
     if (e.trigger === 'reset') {
       console.log('RESET')
-      // changeToPanMode();
-    }
-    if (e.trigger === 'pan') {
       return
       // changeToPanMode();
     }
-    const { chart } = e
-    console.log(e)
-    console.log(
-      'type : ' +
-        e.type +
-        ', trigger : ' +
-        e.trigger +
-        ', AxisX viewportMininum : ' +
-        e.axisX[0].viewportMinimum +
-        ' AxisX viewportMaximum : ' +
-        e.axisX[0].viewportMaximum
-    )
-
     const minOffset = e.axisX[0].viewportMinimum - viewport.viewportMinimum
     const maxOffset = viewport.viewportMaximum - e.axisX[0].viewportMaximum
+    if (e.trigger === 'zoom') {
+      const zoomValue =
+        (maxOffset - minOffset) /
+        (viewport.viewportMaximum - viewport.viewportMinimum)
 
-    const zoomValue =
-      (maxOffset - minOffset) /
-      (viewport.viewportMaximum - viewport.viewportMinimum)
+      console.log(zoomValue)
+      dispatch(updatePlotArbit({ zoomValue }))
 
-    const prevDataPoints = [...plotArbit.data]
-    console.log(prevDataPoints)
-    const newDataPoints = prevDataPoints.map((point) => {
-      return {
-        ...point,
-        markerSize: point.markerSize * (1 + Math.abs(zoomValue)),
-      }
-    })
-    // Replace previous datapoits of chart option
-    dispatch(updatePlotArbit({ data: newDataPoints }))
+      // changeToPanMode();
+    }
+    if (e.trigger === 'pan') {
+      // changeToPanMode();
+    }
 
     dispatch(
       updateViewport({
@@ -122,6 +101,35 @@ const Main = () => {
     )
   }
 
+  const zoomOnScroll = (ref, e) => {
+    if (!window.event.ctrlKey) return
+    e.preventDefault()
+
+    const chart = ref.current.chart
+
+    let dir = (e.wheelDelta || -e.detail) > 0 ? -1 : +1
+    let axisX = chart.axisX[0]
+    let delta = (dir * (axisX.viewportMaximum - axisX.viewportMinimum)) / 10
+
+    let newViewportMinimum =
+      axisX.viewportMinimum - delta * (e.clientX / chart.width)
+    let newViewportMaximum =
+      axisX.viewportMaximum + delta * (1 - e.clientX / chart.width)
+
+    const zoomValue =
+      (newViewportMinimum / viewport.viewportMinimum - 1) * 1000000 + 1
+
+    console.log('Zoom', zoomValue)
+    dispatch(updatePlotArbit({ zoomValue }))
+
+    dispatch(
+      updateViewport({
+        viewportMinimum: newViewportMinimum,
+        viewportMaximum: newViewportMaximum,
+      })
+    )
+  }
+
   return (
     <div>
       {/* <button
@@ -151,6 +159,7 @@ const Main = () => {
         crosshairXMove={crosshairXMove}
         crosshairYMove={crosshairYMove}
         barArbitRef={refArr.barArbit}
+        zoomOnScroll={zoomOnScroll}
       />
       <PairChart
         // ref={ref1}
@@ -158,6 +167,7 @@ const Main = () => {
         crosshairXMove={crosshairXMove}
         crosshairYMove={crosshairYMove}
         rangeHandler={rangeHandler}
+        zoomOnScroll={zoomOnScroll}
       />
       <VolumeChart
         // ref={ref1}
@@ -165,6 +175,7 @@ const Main = () => {
         crosshairXMove={crosshairXMove}
         crosshairYMove={crosshairYMove}
         rangeHandler={rangeHandler}
+        zoomOnScroll={zoomOnScroll}
       />
       <ScatterBig
         updateRef={updateRef}
@@ -172,6 +183,7 @@ const Main = () => {
         crosshairXMove={crosshairXMove}
         crosshairYMove={crosshairYMove}
         barArbitRef={refArr.barArbit}
+        zoomOnScroll={zoomOnScroll}
       />
       <SelectTable />
     </div>

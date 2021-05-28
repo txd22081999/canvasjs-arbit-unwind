@@ -39,14 +39,24 @@ const Scatter = (props) => {
   const global = useSelector((state) => state.global)
 
   useEffect(() => {
-    const { updateRef } = props
+    const { updateRef, zoomOnScroll } = props
     updateRef({ name: 'plotArbit', ref: plotChartRef })
+
+    const chartEl = document.querySelector('#canvasjs-react-chart-container-1')
+    chartEl.addEventListener('wheel', (e) => {
+      zoomOnScroll(plotChartRef, e)
+    })
+    const zoomBtn = chartEl.querySelectorAll('button')[0]
+    if (zoomBtn.getAttribute('state') === 'pan') {
+      zoomBtn.click()
+    }
+    console.log(zoomBtn)
   }, [])
 
   useEffect(() => {
     // const newChartData = PLOT_MIN.slice(0, 100).map((item) => {
     // const newChartData = PLOT.slice(0, 2000).map((item) => {]
-    console.log(UNWIND.circles)
+    // console.log(UNWIND.circles)
     const newChartData = UNWIND.circles.map((item) => {
       const time = item.time.split(':')
       const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
@@ -62,6 +72,7 @@ const Scatter = (props) => {
         time: item.time,
         // counted: item.counted,
         color: item.counted ? '' : GREEN_PLOT_COLOR,
+        bigColor: item.counted ? '' : 'pink',
       }
     })
 
@@ -108,9 +119,6 @@ const Scatter = (props) => {
     //   else accumulator.push(current)
     //   return accumulator
     // }, [])
-
-    console.log(minX)
-    console.log(maxX)
 
     dispatch(
       updateBarArbit({

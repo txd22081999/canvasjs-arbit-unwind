@@ -56,8 +56,6 @@ export const globalSlice = createSlice({
 
     updateRefs: (state, action) => {
       const { payload } = action
-      console.log(payload)
-      console.log({ [payload.name]: payload.ref })
       // state.refs = [...payload.refs]
       state.refs = {
         // ...state.refs,
@@ -67,21 +65,35 @@ export const globalSlice = createSlice({
 
     updatePlotArbit: (state, action) => {
       const { payload } = action
-      const minY = Math.min.apply(
-        null,
-        payload.data.map(({ y }) => y)
-      )
+      if (payload.data) {
+        const minY = Math.min.apply(
+          null,
+          payload.data.map(({ y }) => y)
+        )
 
-      const maxY = Math.max.apply(
-        null,
-        payload.data.map(({ y }) => y)
-      )
-
-      state.plotArbit = {
-        ...state.plotArbit,
-        ...payload,
-        minY,
-        maxY,
+        const maxY = Math.max.apply(
+          null,
+          payload.data.map(({ y }) => y)
+        )
+        state.plotArbit = {
+          ...state.plotArbit,
+          ...payload,
+          minY,
+          maxY,
+        }
+      }
+      if (payload.zoomValue) {
+        const prevDataPoints = [...state.plotArbit.originalData]
+        const newDataPoints = prevDataPoints.map((point) => {
+          return {
+            ...point,
+            markerSize: point.markerSize * payload.zoomValue,
+          }
+        })
+        state.plotArbit = {
+          ...state.plotArbit,
+          data: newDataPoints,
+        }
       }
     },
 
@@ -118,9 +130,6 @@ export const globalSlice = createSlice({
         payload.data.map(({ y }) => y)
       )
 
-      console.log(minY)
-      console.log(maxY)
-
       state.barArbit = {
         ...state.barArbit,
         ...payload,
@@ -150,11 +159,6 @@ export const globalSlice = createSlice({
         payload.data.map(({ y }) => y)
       )
 
-      console.log(payload.data)
-
-      console.log(minY)
-      console.log(maxY)
-
       state.pairVol = {
         ...state.pairVol,
         ...payload,
@@ -166,7 +170,6 @@ export const globalSlice = createSlice({
     updateSummary: (state, action) => {
       const { payload } = action
 
-      console.log(payload)
       state.summary = { ...payload }
     },
 

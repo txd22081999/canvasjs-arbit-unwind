@@ -19,8 +19,10 @@ const VolumeChart = forwardRef((props, ref) => {
   const onMouseMove = (e) => {}
 
   useEffect(() => {
-    const { updateRef } = props
+    const { updateRef, zoomOnScroll } = props
     updateRef({ name: 'barArbit', ref: barArbitChartRef })
+    const chartEl = document.querySelector('#canvasjs-react-chart-container-5')
+    chartEl.addEventListener('wheel', (e) => zoomOnScroll(barArbitChartRef, e))
   }, [])
 
   return (

@@ -30,8 +30,10 @@ const ScatterBig = (props) => {
   const global = useSelector((state) => state.global)
 
   useEffect(() => {
-    const { updateRef } = props
+    const { updateRef, zoomOnScroll } = props
     updateRef({ name: 'plotArbitBig', ref: plotArbitBigRef })
+    const chartEl = document.querySelector('#canvasjs-react-chart-container-7')
+    chartEl.addEventListener('wheel', (e) => zoomOnScroll(plotArbitBigRef, e))
   }, [])
 
   useEffect(() => {
