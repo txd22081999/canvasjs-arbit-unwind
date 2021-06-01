@@ -22,7 +22,8 @@
     "start": "HOST=0.0.0.0 PORT=60006 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "serve": "serve -s build -l 55555"
   },
   "eslintConfig": {
     "extends": [
