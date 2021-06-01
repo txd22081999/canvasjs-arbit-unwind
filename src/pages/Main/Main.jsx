@@ -33,6 +33,8 @@ import { UNWIND } from '../../utils'
 
 const SOCKET_ENDPOINT = `http://45.119.214.155:60009`
 
+let isScrolling, isScrolling2
+
 const Main = () => {
   const dispatch = useDispatch()
   const global = useSelector((state) => state.global)
@@ -45,8 +47,6 @@ const Main = () => {
     pairVol: null,
   })
   const [date, setDate] = useState(new Date())
-
-  const ref1 = useRef(null)
 
   // const connectSocket = async () => {
   //   const res = await axios({
@@ -89,6 +89,7 @@ const Main = () => {
         color,
         bigColor,
         pair: item.variable,
+        index: item.arbit_unwind_index,
       }
     })
 
@@ -97,7 +98,7 @@ const Main = () => {
 
   const setUpData = async () => {
     let newChartData = await fetchArbitData()
-    // newChartData = newChartData.slice(0, 100)
+    // newChartData = newChartData.slice(0, 1000)
     // console.log(newChartData)
 
     // const newChartData = UNWIND.circles.map((item) => {
@@ -128,6 +129,11 @@ const Main = () => {
     console.log(minX)
     console.log(maxX)
 
+    // if (newChartData.length === global.plotArbit.data.length) {
+    //   console.log('nothing to update')
+    //   return
+    // }
+
     dispatch(
       updatePlotArbit({
         originalData: newChartData,
@@ -138,7 +144,7 @@ const Main = () => {
     )
 
     const newBigChartData = newChartData
-      .filter((item) => item.numLots >= 9)
+      .filter((item) => item.numLots >= 9 && item.index === null)
       .map((item) => {
         // const time = item.time.split(':')
         // const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
@@ -154,8 +160,11 @@ const Main = () => {
           time: item.time,
           color,
           pair: item.pair,
+          index: item.index,
         }
       })
+
+    console.log(newBigChartData.length)
 
     dispatch(
       updatePlotArbitBig({
@@ -183,7 +192,7 @@ const Main = () => {
       // const time = timeInput.split(':')
       // const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
       // return { x: newTime, y: numLots }
-      return { x: new Date(timeInput), y: numLots }
+      return { x: new Date(timeInput), y: +numLots }
     })
 
     // const pairVolDataArr = UNWIND.pair_count.map(
@@ -219,6 +228,7 @@ const Main = () => {
   useEffect(() => {
     // connectSocket()
     setUpData()
+    console.log(1)
   }, [])
 
   useEffect(() => {
@@ -226,10 +236,15 @@ const Main = () => {
       console.log('Hello')
       setUpData()
       setDate(new Date())
+      console.log(2)
     }, INTERVAL_TIME)
   }, [date])
 
   const updateRef = ({ name, ref }) => {
+    if (Object.keys(refArr) === 4) {
+      console.log('RETURN')
+      return
+    }
     setRefArr((prevRefArr) => {
       return {
         ...prevRefArr,
@@ -326,16 +341,37 @@ const Main = () => {
       (newViewportMinimum / viewport.viewportMinimum - 1) * 1000000 + 1
 
     console.log('Zoom', zoomValue)
-    dispatch(updatePlotArbit({ zoomValue }))
-
     console.log(axisX.viewportMinimum)
     console.log(axisX.viewportMaximum)
 
-    dispatch(
-      updateViewport({
-        viewportMinimum: newViewportMinimum,
-        viewportMaximum: newViewportMaximum,
-      })
+    // Listen for scroll events
+
+    console.log(zoomValue)
+
+    // Clear our timeout throughout the scroll
+    window.clearTimeout(isScrolling)
+    window.clearTimeout(isScrolling2)
+
+    // Set a timeout to run after scrolling ends
+    isScrolling = setTimeout(() => {
+      dispatch(
+        updateViewport({
+          viewportMinimum: newViewportMinimum,
+          viewportMaximum: newViewportMaximum,
+        })
+      )
+      console.log('Scrolling has stopped.')
+      console.log('Update Viewport')
+    }, 0)
+
+    isScrolling2 = setTimeout(
+      () => {
+        dispatch(updatePlotArbit({ zoomValue }))
+        console.log('Scrolling has stopped.')
+        console.log('Update Radius', zoomValue)
+      },
+      500,
+      zoomValue
     )
   }
 
