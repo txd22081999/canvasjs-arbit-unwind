@@ -1,0 +1,9 @@
+{
+    x: Date,
+    y: 1,
+    markerSize: 1,
+    numLots: 1,
+    time: '',
+    color: '',
+    bigColor: '',
+}

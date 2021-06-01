@@ -19,10 +19,11 @@ const PairChart = forwardRef((props, ref) => {
   const onMouseMove = (e) => {}
 
   useEffect(() => {
-    const { updateRef, zoomOnScroll } = props
+    const { updateRef, zoomOnScroll, setDefaultToPan } = props
     updateRef({ name: 'pairVol', ref: pairVolChartRef })
     const chartEl = document.querySelector('#canvasjs-react-chart-container-3')
     chartEl.addEventListener('wheel', (e) => zoomOnScroll(pairVolChartRef, e))
+    setDefaultToPan(chartEl)
   }, [])
 
   return (

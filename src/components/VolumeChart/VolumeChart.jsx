@@ -19,15 +19,18 @@ const VolumeChart = forwardRef((props, ref) => {
   const onMouseMove = (e) => {}
 
   useEffect(() => {
-    const { updateRef, zoomOnScroll } = props
+    const { updateRef, zoomOnScroll, setDefaultToPan } = props
     updateRef({ name: 'barArbit', ref: barArbitChartRef })
     const chartEl = document.querySelector('#canvasjs-react-chart-container-5')
+    console.log(chartEl)
     chartEl.addEventListener('wheel', (e) => zoomOnScroll(barArbitChartRef, e))
+    setDefaultToPan(chartEl)
   }, [])
 
   return (
-    <div>
+    <div className='hello1'>
       <CanvasJSChart
+        className='hello'
         // ref={ref}
         ref={barArbitChartRef}
         options={{
@@ -37,6 +40,7 @@ const VolumeChart = forwardRef((props, ref) => {
           // height: 700,
           axisX: {
             labelFontSize: AXIS_FONT_SIZE,
+            margin: 10,
             labelFormatter,
             crosshair: {
               enabled: true,

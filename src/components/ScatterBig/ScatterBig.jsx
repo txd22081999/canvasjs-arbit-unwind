@@ -30,37 +30,36 @@ const ScatterBig = (props) => {
   const global = useSelector((state) => state.global)
 
   useEffect(() => {
-    const { updateRef, zoomOnScroll } = props
+    const { updateRef, zoomOnScroll, setDefaultToPan } = props
     updateRef({ name: 'plotArbitBig', ref: plotArbitBigRef })
     const chartEl = document.querySelector('#canvasjs-react-chart-container-7')
     chartEl.addEventListener('wheel', (e) => zoomOnScroll(plotArbitBigRef, e))
+    setDefaultToPan(chartEl)
   }, [])
 
   useEffect(() => {
     // const newChartData = PLOT_MIN.slice(0, 100).map((item) => {
     // const newChartData = PLOT.slice(0, 2000).map((item) => {
-    const newChartData = UNWIND.circles
-      .filter((item) => item.num_lots > 2.5)
-      .map((item) => {
-        const time = item.time.split(':')
-        const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
-        const markerSize = Number.parseFloat(item.radius * 1.5).toFixed(4)
-
-        return {
-          x: newTime,
-          y: item.y,
-          markerSize,
-          numLots: item.num_lots,
-          time: item.time,
-        }
-      })
-
-    dispatch(
-      updatePlotArbitBig({
-        originalData: newChartData,
-        data: newChartData,
-      })
-    )
+    // const newChartData = UNWIND.circles
+    //   .filter((item) => item.num_lots > 2.5)
+    //   .map((item) => {
+    //     const time = item.time.split(':')
+    //     const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
+    //     const markerSize = Number.parseFloat(item.radius * 1.5).toFixed(4)
+    //     return {
+    //       x: newTime,
+    //       y: item.y,
+    //       markerSize,
+    //       numLots: item.num_lots,
+    //       time: item.time,
+    //     }
+    //   })
+    // dispatch(
+    //   updatePlotArbitBig({
+    //     originalData: newChartData,
+    //     data: newChartData,
+    //   })
+    // )
   }, [])
 
   const onPointClick = (e) => {

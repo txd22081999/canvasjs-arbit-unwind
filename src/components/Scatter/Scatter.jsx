@@ -39,106 +39,18 @@ const Scatter = (props) => {
   const global = useSelector((state) => state.global)
 
   useEffect(() => {
-    const { updateRef, zoomOnScroll } = props
+    const { updateRef, zoomOnScroll, setDefaultToPan } = props
     updateRef({ name: 'plotArbit', ref: plotChartRef })
 
     const chartEl = document.querySelector('#canvasjs-react-chart-container-1')
+    console.log(chartEl)
     chartEl.addEventListener('wheel', (e) => {
       zoomOnScroll(plotChartRef, e)
     })
-    const zoomBtn = chartEl.querySelectorAll('button')[0]
-    if (zoomBtn.getAttribute('state') === 'pan') {
-      zoomBtn.click()
-    }
-    console.log(zoomBtn)
+    setDefaultToPan(chartEl)
   }, [])
 
-  useEffect(() => {
-    // const newChartData = PLOT_MIN.slice(0, 100).map((item) => {
-    // const newChartData = PLOT.slice(0, 2000).map((item) => {]
-    // console.log(UNWIND.circles)
-    const newChartData = UNWIND.circles.map((item) => {
-      const time = item.time.split(':')
-      const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
-      const z = item.radius ^ 0.5
-      const zValue = +Number.parseFloat(item.radius).toFixed(3)
-      const markerSize = Number.parseFloat(item.radius).toFixed(4)
-
-      return {
-        x: newTime,
-        y: item.y,
-        markerSize,
-        numLots: item.num_lots,
-        time: item.time,
-        // counted: item.counted,
-        color: item.counted ? '' : GREEN_PLOT_COLOR,
-        bigColor: item.counted ? '' : 'pink',
-      }
-    })
-
-    const timeArr = newChartData.map(({ x }) => x)
-    const minX = new Date(Math.min.apply(null, timeArr))
-    const maxX = new Date(Math.max.apply(null, timeArr))
-
-    dispatch(
-      updatePlotArbit({
-        originalData: newChartData,
-        data: newChartData,
-        minX,
-        maxX,
-      })
-    )
-
-    const newNumLotsData = newChartData.map(({ x, numLots }) => ({
-      x,
-      y: 1,
-    }))
-
-    const volumeDataArr = UNWIND.predictions.map(
-      ({ time: timeInput, num_lots }) => {
-        const time = timeInput.split(':')
-        const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
-        return { x: newTime, y: num_lots }
-      }
-    )
-
-    const pairVolDataArr = UNWIND.pair_count.map(
-      ({ time: timeInput, num_lots }) => {
-        const time = timeInput.split(':')
-        const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
-        return { x: newTime, y: num_lots }
-      }
-    )
-    // volumeDataArr.map(({x}) => x)
-
-    // const volumeDataArr = newNumLotsData.reduce((accumulator, current) => {
-    //   const found = accumulator.find((elem) => {
-    //     return +elem.x === +current.x
-    //   })
-    //   if (found) found.y += current.y
-    //   else accumulator.push(current)
-    //   return accumulator
-    // }, [])
-
-    dispatch(
-      updateBarArbit({
-        originalData: volumeDataArr,
-        data: volumeDataArr,
-        minX,
-        maxX,
-      })
-    )
-
-    dispatch(
-      updatePairVol({
-        originalData: pairVolDataArr,
-        data: pairVolDataArr,
-        minX,
-        maxX,
-      })
-    )
-    dispatch(updateSummary(UNWIND.summary))
-  }, [])
+  useEffect(() => {}, [global.plotArbit])
 
   const onPointClick = (e) => {
     const {
@@ -216,10 +128,12 @@ const Scatter = (props) => {
           //   fontSize: 30,
           // },
           height: 500,
-          interactivityEnabled: true,
+          // interactivityEnabled: true,
           zoomEnabled: true,
           axisX: {
             labelFontSize: AXIS_FONT_SIZE,
+            intervalType: 'minute',
+            interval: 20,
             crosshair: {
               enabled: true,
               updated: crosshairXMove,
@@ -243,16 +157,19 @@ const Scatter = (props) => {
             {
               type: 'line',
               // mousemove: onMouseMove,
-              toolTipContent: `<div class='tool-tip'><p>r: {markerSize}</p><p>y: {y}</p></div>`,
-              fillOpacity: 0,
-              dataPoints: [...plotArbit.data],
+              toolTipContent: `<div class='tool-tip'><p>r: {markerSize}</p><p>x: {x}</p></div><p>y: {y}</p></div>`,
               markerType: 'circle',
-              // lineThickness: 0,
               lineColor: 'white',
               color: PLOT_ARBIT_COLOR,
               click: (e) => {
                 onPointClick(e)
               },
+              dataPoints: [...plotArbit.data],
+              // dataPoints: [
+              //   { x: new Date('2021-05-31 09:44:08'), y: 565 },
+              //   { x: new Date('2021-05-31 09:54:08'), y: 255 },
+              //   { x: new Date('2021-05-31 09:34:08'), y: 405 },
+              // ],
             },
           ],
           // mousemove: (e) => {

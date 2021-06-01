@@ -46,6 +46,13 @@ export const addSecond = (inputTime, seconds = 1) => {
   return newTime
 }
 
+const pad = (d) => {
+  return d < 10 ? '0' + d.toString() : d.toString()
+}
+
 export const labelFormatter = (e) => {
-  return moment(e.value).format('HH:MM')
+  const date = new Date(e.value)
+  const hour = pad(+date.getHours())
+  const minute = pad(+date.getMinutes())
+  return `${hour}:${minute}`
 }
