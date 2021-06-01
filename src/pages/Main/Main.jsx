@@ -73,7 +73,7 @@ const Main = () => {
       const time = item.time.split(':')
       // const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
       const newTime = new Date(item.time)
-      const numLots = item.num_lots
+      const numLots = Number.parseFloat(+item.num_lots).toFixed(4)
       const counted = item.counted
       const color = counted ? GREEN_PLOT_COLOR : ''
       const bigColor = counted ? '' : PINK_COLOR
@@ -88,6 +88,7 @@ const Main = () => {
         counted,
         color,
         bigColor,
+        pair: item.variable,
       }
     })
 
@@ -137,7 +138,7 @@ const Main = () => {
     )
 
     const newBigChartData = newChartData
-      .filter((item) => item.numLots > 2.5)
+      .filter((item) => item.numLots >= 9)
       .map((item) => {
         // const time = item.time.split(':')
         // const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
@@ -152,6 +153,7 @@ const Main = () => {
           numLots: item.numLots,
           time: item.time,
           color,
+          pair: item.pair,
         }
       })
 

@@ -157,7 +157,8 @@ const Scatter = (props) => {
             {
               type: 'line',
               // mousemove: onMouseMove,
-              toolTipContent: `<div class='tool-tip'><p>r: {markerSize}</p><p>x: {x}</p></div><p>y: {y}</p></div>`,
+              toolTipContent: `<div class='tool-tip'><p>{pair[0]}-{pair[1]}</p><p>num_lots: {numLots}</p></div>`,
+              // toolTipContent: `<div class='tool-tip'><p>r: {markerSize}</p><p>x: {x}</p></div><p>y: {y}</p></div>`,
               markerType: 'circle',
               lineColor: 'white',
               color: PLOT_ARBIT_COLOR,

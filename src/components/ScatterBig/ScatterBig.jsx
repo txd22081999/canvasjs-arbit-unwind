@@ -32,10 +32,18 @@ const ScatterBig = (props) => {
   useEffect(() => {
     const { updateRef, zoomOnScroll, setDefaultToPan } = props
     updateRef({ name: 'plotArbitBig', ref: plotArbitBigRef })
+    // const chartEl = document.querySelector('#canvasjs-react-chart-container-7')
+    // chartEl.addEventListener('wheel', (e) => zoomOnScroll(plotArbitBigRef, e))
+    // setDefaultToPan(chartEl)
+  }, [])
+
+  useEffect(() => {
+    const { updateRef, zoomOnScroll, setDefaultToPan } = props
     const chartEl = document.querySelector('#canvasjs-react-chart-container-7')
     chartEl.addEventListener('wheel', (e) => zoomOnScroll(plotArbitBigRef, e))
     setDefaultToPan(chartEl)
-  }, [])
+    console.log('Here')
+  }, [document.querySelector('#canvasjs-react-chart-container-7')])
 
   useEffect(() => {
     // const newChartData = PLOT_MIN.slice(0, 100).map((item) => {
@@ -165,7 +173,7 @@ const ScatterBig = (props) => {
             {
               type: 'line',
               // mousemove: onMouseMove,
-              toolTipContent: `<div class='tool-tip'><p>r: {markerSize}</p><p>y: {y}</p></div>`,
+              toolTipContent: `<div class='tool-tip'><p>{pair[0]} - {pair[1]}</p><p>num_lots: {numLots}</p></div>`,
               fillOpacity: 0,
               dataPoints: [...plotArbitBig.data],
               markerType: 'circle',
