@@ -11,6 +11,9 @@ const App = () => {
     // const end = '11:00:00'
     // const a = addSecond('09:41:40')
     // const b = addSecond(a)
+    return () => {
+      sessionStorage.removeItem('selected')
+    }
   }, [])
 
   return (

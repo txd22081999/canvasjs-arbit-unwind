@@ -19,7 +19,8 @@ export const globalSlice = createSlice({
     plotArbit: {
       originalData: [],
       data: [],
-      selectedData: [],
+      selectedData: JSON.parse(sessionStorage.getItem('selected') || '[]'),
+      // sessionStorage.getItem('selected') || [],
       minY: 0,
       maxY: 0,
       minX: 0,
@@ -27,7 +28,8 @@ export const globalSlice = createSlice({
     },
     barArbit: {
       originalData: [],
-      selectedData: [],
+      // selectedData: [],
+      // selectedData: sessionStorage.getItem('selected') || [],
       data: [],
       minY: 0,
       maxY: 0,

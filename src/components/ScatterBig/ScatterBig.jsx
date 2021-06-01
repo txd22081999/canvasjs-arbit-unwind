@@ -94,7 +94,7 @@ const ScatterBig = (props) => {
 
     let totalNumLots = 0
     for (let i = 0; i < selectedDataPoints.length; i++) {
-      totalNumLots += selectedDataPoints[i].numLots
+      totalNumLots += +selectedDataPoints[i].numLots
     }
 
     const medianValue = getMedian(
@@ -108,6 +108,13 @@ const ScatterBig = (props) => {
       median: +Number.parseFloat(medianValue).toFixed(3),
     }
     // return [...prev, newData]
+
+    const selectedDataArr = JSON.stringify([
+      ...global.plotArbit.selectedData,
+      newData,
+    ])
+    sessionStorage.setItem('selected', selectedDataArr)
+    console.log('WROTE')
 
     dispatch(
       updatePlotArbit({

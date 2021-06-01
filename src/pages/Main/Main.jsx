@@ -73,7 +73,7 @@ const Main = () => {
       const time = item.time.split(':')
       // const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
       const newTime = new Date(item.time)
-      const numLots = Number.parseFloat(+item.num_lots).toFixed(4)
+      const numLots = +Number.parseFloat(+item.num_lots).toFixed(4)
       const counted = item.counted
       const color = counted ? GREEN_PLOT_COLOR : ''
       const bigColor = counted ? '' : PINK_COLOR

@@ -8,6 +8,8 @@ const SelectTable = () => {
   const global = useSelector((state) => state.global)
   const dispatch = useDispatch()
 
+  console.log(global.plotArbit.selectedData)
+
   return (
     <div>
       <div className='info'>
