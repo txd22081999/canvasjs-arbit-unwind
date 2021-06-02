@@ -69,7 +69,7 @@ const Main = () => {
 
     const { data = [] } = res
 
-    const newChartData = data.map((item) => {
+    let newChartData = data.map((item) => {
       const time = item.time.split(':')
       // const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
       const newTime = new Date(item.time)
@@ -92,6 +92,21 @@ const Main = () => {
         index: item.arbit_unwind_index,
       }
     })
+
+    const selectedData = JSON.parse(sessionStorage.getItem('selected'))
+
+    if (selectedData && selectedData.length > 0) {
+      newChartData = newChartData.filter(
+        (elem) =>
+          !selectedData.find(({ time }) => {
+            return new Date(elem.time).getTime() === new Date(time).getTime()
+          })
+      )
+
+      // newChartData = newChartData.filter(item => {
+      //   return new Date(item.time) === new Date()
+      // })
+    }
 
     return newChartData
   }
@@ -164,7 +179,7 @@ const Main = () => {
         }
       })
 
-    console.log(newBigChartData.length)
+    // console.log(newBigChartData.length)
 
     dispatch(
       updatePlotArbitBig({
@@ -223,26 +238,20 @@ const Main = () => {
     // dispatch(updateSummary(UNWIND.summary))
   }
 
-  console.log('RENDER')
-
   useEffect(() => {
     // connectSocket()
     setUpData()
-    console.log(1)
   }, [])
 
   useEffect(() => {
     setTimeout(() => {
-      console.log('Hello')
       setUpData()
       setDate(new Date())
-      console.log(2)
     }, INTERVAL_TIME)
   }, [date])
 
   const updateRef = ({ name, ref }) => {
     if (Object.keys(refArr) === 4) {
-      console.log('RETURN')
       return
     }
     setRefArr((prevRefArr) => {
@@ -275,7 +284,7 @@ const Main = () => {
         (viewport.viewportMaximum - viewport.viewportMinimum)
 
       console.log(zoomValue)
-      dispatch(updatePlotArbit({ zoomValue }))
+      // dispatch(updatePlotArbit({ zoomValue }))
 
       // changeToPanMode();
     }
@@ -323,7 +332,7 @@ const Main = () => {
   }
 
   const zoomOnScroll = (ref, e) => {
-    if (!window.event.ctrlKey) return
+    // if (!window.event.ctrlKey) return
     e.preventDefault()
 
     const chart = ref.current.chart
@@ -331,6 +340,9 @@ const Main = () => {
     let dir = (e.wheelDelta || -e.detail) > 0 ? -1 : +1
     let axisX = chart.axisX[0]
     let delta = (dir * (axisX.viewportMaximum - axisX.viewportMinimum)) / 10
+
+    // console.log(axisX.viewportMinimum)
+    // console.log(axisX.viewportMaximum)
 
     let newViewportMinimum =
       axisX.viewportMinimum - delta * (e.clientX / chart.width)

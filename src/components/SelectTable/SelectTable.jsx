@@ -8,8 +8,6 @@ const SelectTable = () => {
   const global = useSelector((state) => state.global)
   const dispatch = useDispatch()
 
-  console.log(global.plotArbit.selectedData)
-
   const tableData = [...global.plotArbit.selectedData]
 
   const columns = [

@@ -113,8 +113,8 @@ const ScatterBig = (props) => {
       ...global.plotArbit.selectedData,
       newData,
     ])
+
     sessionStorage.setItem('selected', selectedDataArr)
-    console.log('WROTE')
 
     dispatch(
       updatePlotArbit({

@@ -90,6 +90,13 @@ const Scatter = (props) => {
     }
     // return [...prev, newData]
 
+    const selectedDataArr = JSON.stringify([
+      ...global.plotArbit.selectedData,
+      newData,
+    ])
+
+    sessionStorage.setItem('selected', selectedDataArr)
+
     dispatch(
       updatePlotArbit({
         data: newDataPoints,

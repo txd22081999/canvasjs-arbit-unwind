@@ -10,12 +10,15 @@ export const globalSlice = createSlice({
     viewport: {
       // old
       // viewportMinimum: 1621390598622,
-      viewportMinimum: 1621290598622,
-      viewportMaximum: 1621409415869,
+      // viewportMaximum: 1621409415869,
       // viewportMaximum: 1622526723500,
       // new
       // viewportMaximum: 1622517723500,
       // viewportMinimum: 1622513736500,
+      // viewportMaximum: 1622526723500,
+      viewportMinimum: 1622600136500,
+      // viewportMaximum: 1622605528500, //max
+      viewportMaximum: 1622725528500, //max edit
       // viewportMaximum: 1622526723500,
     },
     plotArbit: {

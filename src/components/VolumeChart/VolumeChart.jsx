@@ -58,6 +58,7 @@ const VolumeChart = forwardRef((props, ref) => {
             viewportMaximum: viewport.viewportMaximum,
           },
           axisY: {
+            margin: 10,
             labelFontSize: AXIS_FONT_SIZE,
             maximum: barArbit.maxY,
             crosshair: {
