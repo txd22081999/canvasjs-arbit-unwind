@@ -25,6 +25,7 @@ import {
   updatePairVol,
   updateSummary,
   updatePlotArbitBig,
+  resetViewport,
 } from '../../features/global/globalSlice'
 
 import './Main.scss'
@@ -113,7 +114,7 @@ const Main = () => {
 
   const setUpData = async () => {
     let newChartData = await fetchArbitData()
-    // newChartData = newChartData.slice(0, 1000)
+    // newChartData = newChartData.slice(0, 5000)
     // console.log(newChartData)
 
     // const newChartData = UNWIND.circles.map((item) => {
@@ -272,7 +273,7 @@ const Main = () => {
   const rangeHandler = (e) => {
     const { chart } = e
     if (e.trigger === 'reset') {
-      console.log('RESET')
+      dispatch(resetViewport())
       return
       // changeToPanMode();
     }

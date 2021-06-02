@@ -1,5 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const DEFAULT_VIEWPORT = {
+  viewportMinimum: 1622600136500,
+  viewportMaximum: 1622725528500, //max edit
+}
+
 export const globalSlice = createSlice({
   name: 'global',
   initialState: {
@@ -185,6 +190,9 @@ export const globalSlice = createSlice({
       state.summary = { ...payload }
     },
 
+    resetViewport: (state) => {
+      state.viewport = DEFAULT_VIEWPORT
+    },
     // increment: (state) => {
     //   // Redux Toolkit allows us to write "mutating" logic in reducers. It
     //   // doesn't actually mutate the state because it uses the Immer library,
@@ -208,6 +216,7 @@ export const {
   updatePairVol,
   updateRefs,
   updateSummary,
+  resetViewport,
 } = globalSlice.actions
 
 export default globalSlice.reducer
