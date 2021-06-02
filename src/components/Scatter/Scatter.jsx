@@ -75,7 +75,7 @@ const Scatter = (props) => {
     )
     let totalNumLots = 0
     for (let i = 0; i < selectedDataPoints.length; i++) {
-      totalNumLots += +selectedDataPoints[i].numLots
+      totalNumLots += selectedDataPoints[i].numLots
     }
 
     const medianValue = getMedian(

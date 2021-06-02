@@ -1,14 +1,42 @@
 import React from 'react'
-
+import ReactTable from 'react-table-v6'
 import { useSelector, useDispatch } from 'react-redux'
 
-import './SelectTable'
+import './SelectTable.scss'
 
 const SelectTable = () => {
   const global = useSelector((state) => state.global)
   const dispatch = useDispatch()
 
   console.log(global.plotArbit.selectedData)
+
+  const tableData = [...global.plotArbit.selectedData]
+
+  const columns = [
+    {
+      Header: 'total_data_points',
+      accessor: 'totalDataPoints', // String-based value accessors!
+    },
+    {
+      Header: 'total_data_num_lots',
+      accessor: 'totalNumLots',
+      Cell: (props) => <span className='number'>{props.value}</span>, // Custom cell components!
+    },
+    {
+      Header: 'median',
+      accessor: 'median', // String-based value accessors!
+    },
+    {
+      Header: 'time',
+      accessor: 'time', // String-based value accessors!
+    },
+  ]
+
+  return (
+    <div className='SelectTable'>
+      <ReactTable width={600} data={tableData} columns={columns} />
+    </div>
+  )
 
   return (
     <div>

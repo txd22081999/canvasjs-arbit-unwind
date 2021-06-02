@@ -9,12 +9,14 @@ export const globalSlice = createSlice({
     },
     viewport: {
       // old
-      // viewportMinimum: 1621390598622.0627,
-      // viewportMaximum: 1621409415869.5188,
+      // viewportMinimum: 1621390598622,
+      viewportMinimum: 1621290598622,
+      viewportMaximum: 1621409415869,
+      // viewportMaximum: 1622526723500,
       // new
-      viewportMinimum: 1622513736500,
       // viewportMaximum: 1622517723500,
-      viewportMaximum: 1622526723500,
+      // viewportMinimum: 1622513736500,
+      // viewportMaximum: 1622526723500,
     },
     plotArbit: {
       originalData: [],

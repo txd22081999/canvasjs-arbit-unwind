@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import moment from 'moment'
 
 import Main from './pages/Main'
-import './App.scss'
 import { addSecond } from './utils'
+
+import 'react-table-v6/react-table.css'
+import './App.scss'
 
 const App = () => {
   useEffect(() => {
