@@ -29,7 +29,7 @@ import {
 } from '../../features/global/globalSlice'
 
 import './Main.scss'
-import { ARBIT_ENDPOINT } from '../../services'
+import { ARBIT_CIRCLE_ENDPOINT, ARBIT_ENDPOINT } from '../../services'
 import { UNWIND } from '../../utils'
 
 const SOCKET_ENDPOINT = `http://45.119.214.155:60009`
@@ -65,15 +65,15 @@ const Main = () => {
   const fetchArbitData = async () => {
     const res = await axios({
       method: 'GET',
-      url: ARBIT_ENDPOINT,
+      url: ARBIT_CIRCLE_ENDPOINT,
     })
 
     const { data = [] } = res
 
     let newChartData = data.map((item) => {
       const time = item.time.split(':')
-      // const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
-      const newTime = new Date(item.time)
+      const newTime = new Date(2021, 5, 4, +time[0], +time[1], +time[2])
+      // const newTime = new Date(item.time)
       const numLots = +Number.parseFloat(+item.num_lots).toFixed(4)
       const counted = item.counted
       const color = counted ? GREEN_PLOT_COLOR : ''
@@ -114,29 +114,7 @@ const Main = () => {
 
   const setUpData = async () => {
     let newChartData = await fetchArbitData()
-    // newChartData = newChartData.slice(0, 5000)
-    // console.log(newChartData)
-
-    // const newChartData = UNWIND.circles.map((item) => {
-    //   const time = item.time.split(':')
-    //   const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
-    //   const z = item.radius ^ 0.5
-    //   const zValue = +Number.parseFloat(item.radius).toFixed(3)
-    //   const markerSize = Number.parseFloat(item.radius).toFixed(4)
-
-    //   return {
-    //     x: newTime,
-    //     y: item.y,
-    //     markerSize,
-    //     numLots: item.num_lots,
-    //     time: item.time,
-    //     // counted: item.counted,
-    //     color: item.counted ? '' : GREEN_PLOT_COLOR,
-    //     bigColor: item.counted ? '' : 'pink',
-    //   }
-    // })
-
-    // console.log(newChartData)
+    newChartData = newChartData.slice(0, 5000)
 
     const timeArr = newChartData.map(({ x }) => x)
     const minX = new Date(Math.min.apply(null, timeArr))
@@ -180,8 +158,6 @@ const Main = () => {
         }
       })
 
-    // console.log(newBigChartData.length)
-
     dispatch(
       updatePlotArbitBig({
         originalData: newBigChartData,
@@ -205,10 +181,10 @@ const Main = () => {
 
     // new
     const volumeDataArr = newChartData.map(({ time: timeInput, numLots }) => {
-      // const time = timeInput.split(':')
-      // const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
-      // return { x: newTime, y: numLots }
-      return { x: new Date(timeInput), y: +numLots }
+      const time = timeInput.split(':')
+      const newTime = new Date(2021, 4, 19, +time[0], +time[1], +time[2])
+      return { x: newTime, y: numLots }
+      // return { x: new Date(timeInput), y: +numLots }
     })
 
     // const pairVolDataArr = UNWIND.pair_count.map(
@@ -302,11 +278,8 @@ const Main = () => {
   }
 
   const crosshairXMove = (e) => {
-    // if (!ref1.current) return
-    // console.log(ref1.current)
-    // ref1.current.chart.axisX[0].crosshair.showAt(e.value)
     if (!refArr.barArbit || !refArr.barArbit.current) return
-    // console.log(refArr.barArbit.current)
+    console.log('X Move')
     refArr.barArbit.current.chart.axisX[0].crosshair.showAt(e.value)
     refArr.plotArbit.current.chart.axisX[0].crosshair.showAt(e.value)
     refArr.plotArbitBig.current.chart.axisX[0].crosshair.showAt(e.value)
@@ -314,9 +287,6 @@ const Main = () => {
   }
 
   const crosshairYMove = (e, max) => {
-    // if (!ref1.current) return
-    // console.log(ref1.current)
-    // ref1.current.chart.axisX[0].crosshair.showAt(e.value)
     if (!refArr.barArbit) return
     refArr.barArbit.current.chart.axisY[0].crosshair.showAt(
       (e.value / max) * barArbit.maxY
@@ -332,7 +302,7 @@ const Main = () => {
     )
   }
 
-  const zoomOnScroll = (ref, e) => {
+  const zoomOnScroll = (ref, e, currentViewPort) => {
     // if (!window.event.ctrlKey) return
     e.preventDefault()
 
@@ -342,8 +312,18 @@ const Main = () => {
     let axisX = chart.axisX[0]
     let delta = (dir * (axisX.viewportMaximum - axisX.viewportMinimum)) / 10
 
-    // console.log(axisX.viewportMinimum)
-    // console.log(axisX.viewportMaximum)
+    if (
+      currentViewPort.currentViewPortMinimum === 0 &&
+      viewport.viewportMaximum === 0
+    ) {
+      dispatch(
+        updateViewport({
+          viewportMinimum: axisX.viewportMinimum,
+          viewportMaximum: axisX.viewportMaximum,
+        })
+      )
+      return
+    }
 
     let newViewportMinimum =
       axisX.viewportMinimum - delta * (e.clientX / chart.width)
@@ -352,14 +332,6 @@ const Main = () => {
 
     const zoomValue =
       (newViewportMinimum / viewport.viewportMinimum - 1) * 1000000 + 1
-
-    console.log('Zoom', zoomValue)
-    console.log(axisX.viewportMinimum)
-    console.log(axisX.viewportMaximum)
-
-    // Listen for scroll events
-
-    console.log(zoomValue)
 
     // Clear our timeout throughout the scroll
     window.clearTimeout(isScrolling)
@@ -375,11 +347,11 @@ const Main = () => {
       )
       console.log('Scrolling has stopped.')
       console.log('Update Viewport')
-    }, 0)
+    }, 200)
 
     isScrolling2 = setTimeout(
       () => {
-        dispatch(updatePlotArbit({ zoomValue }))
+        // dispatch(updatePlotArbit({ zoomValue }))
         console.log('Scrolling has stopped.')
         console.log('Update Radius', zoomValue)
       },
@@ -420,7 +392,7 @@ const Main = () => {
         rangeHandler={rangeHandler}
         crosshairXMove={crosshairXMove}
         crosshairYMove={crosshairYMove}
-        barArbitRef={refArr.barArbit}
+        // barArbitRef={refArr.barArbit}
         zoomOnScroll={zoomOnScroll}
         setDefaultToPan={setDefaultToPan}
       />

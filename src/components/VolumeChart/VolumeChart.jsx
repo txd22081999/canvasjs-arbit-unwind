@@ -23,7 +23,9 @@ const VolumeChart = forwardRef((props, ref) => {
     updateRef({ name: 'barArbit', ref: barArbitChartRef })
     const chartEl = document.querySelector('#canvasjs-react-chart-container-5')
     console.log(chartEl)
-    chartEl.addEventListener('wheel', (e) => zoomOnScroll(barArbitChartRef, e))
+    chartEl.addEventListener('wheel', (e) =>
+      zoomOnScroll(barArbitChartRef, e, global.viewport)
+    )
     setDefaultToPan(chartEl)
   }, [])
 
@@ -35,7 +37,6 @@ const VolumeChart = forwardRef((props, ref) => {
         ref={barArbitChartRef}
         options={{
           height: 70,
-          // interactivityEnabled: true,
           zoomEnabled: true,
           // height: 700,
           axisX: {
@@ -44,16 +45,13 @@ const VolumeChart = forwardRef((props, ref) => {
             labelFormatter,
             crosshair: {
               enabled: true,
-              // showAt: 1621396741826.3198,
               updated: (e) => {
                 crosshairXMove(e)
               },
             },
             gridThickness: 0,
-            // minimum: new Date('2021-05-19 09:16:00'),
-            // maximum: new Date('2021-05-19 11:00:00'),
-            minimum: barArbit.minX,
-            maximum: barArbit.maxX,
+            // minimum: barArbit.minX,
+            // maximum: barArbit.maxX,
             viewportMinimum: viewport.viewportMinimum,
             viewportMaximum: viewport.viewportMaximum,
           },
@@ -75,8 +73,15 @@ const VolumeChart = forwardRef((props, ref) => {
               type: 'column',
               mousemove: onMouseMove,
               toolTipContent: `<div class='tool-tip'><p>num_lots: {y}</p></div>`,
-              // fillOpacity: 0,
               dataPoints: [...barArbit.data],
+              // dataPoints: [
+              //   { x: 1, y: 10 },
+              //   { x: 2, y: 10 },
+              //   { x: 3, y: 10 },
+              //   { x: 4, y: 10 },
+              //   { x: 5, y: 10 },
+              //   { x: 6, y: 10 },
+              // ],
               color: PREDICT_COLOR,
               // click: (e) => {
               //   onPointClick(e)

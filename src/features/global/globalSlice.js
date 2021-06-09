@@ -1,8 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const DEFAULT_VIEWPORT = {
-  viewportMinimum: 1622600136500,
-  viewportMaximum: 1622725528500, //max edit
+  // viewportMinimum: 1622600136500,
+  // viewportMaximum: 1622725528500, //max edit
+  // viewportMinimum: 1622772937500,
+  // viewportMaximum: 1622789987500,
+  viewportMinimum: 0,
+  viewportMaximum: 0,
 }
 
 export const globalSlice = createSlice({
@@ -12,20 +16,21 @@ export const globalSlice = createSlice({
       plotArbit: null,
       barArbit: null,
     },
-    viewport: {
-      // old
-      // viewportMinimum: 1621390598622,
-      // viewportMaximum: 1621409415869,
-      // viewportMaximum: 1622526723500,
-      // new
-      // viewportMaximum: 1622517723500,
-      // viewportMinimum: 1622513736500,
-      // viewportMaximum: 1622526723500,
-      viewportMinimum: 1622600136500,
-      // viewportMaximum: 1622605528500, //max
-      viewportMaximum: 1622725528500, //max edit
-      // viewportMaximum: 1622526723500,
-    },
+    viewport: DEFAULT_VIEWPORT,
+    // viewport: {
+    //   // old
+    //   // viewportMinimum: 1621390598622,
+    //   // viewportMaximum: 1621409415869,
+    //   // viewportMaximum: 1622526723500,
+    //   // new
+    //   // viewportMaximum: 1622517723500,
+    //   // viewportMinimum: 1622513736500,
+    //   // viewportMaximum: 1622526723500,
+    //   // viewportMaximum: 1622605528500, //max
+    //   viewportMinimum: 1622600136500,
+    //   viewportMaximum: 1622725528500, //max edit
+    //   // viewportMaximum: 1622526723500,
+    // },
     plotArbit: {
       originalData: [],
       data: [],

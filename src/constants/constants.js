@@ -6,4 +6,4 @@ export const GREEN_PLOT_COLOR = 'rgba(0, 199, 0, 0.2)'
 export const VIEWPORT_MAXIMUM = 1621390598622.0627
 export const VIEWPORT_MINIMUM = 1621409415869.5188
 export const PINK_COLOR = 'rgba(255, 83, 112, 0.2)'
-export const INTERVAL_TIME = 5000
+export const INTERVAL_TIME = 500000

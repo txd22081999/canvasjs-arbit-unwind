@@ -43,9 +43,8 @@ const Scatter = (props) => {
     updateRef({ name: 'plotArbit', ref: plotChartRef })
 
     const chartEl = document.querySelector('#canvasjs-react-chart-container-1')
-    console.log(chartEl)
     chartEl.addEventListener('wheel', (e) => {
-      zoomOnScroll(plotChartRef, e)
+      zoomOnScroll(plotChartRef, e, global.viewport)
     })
     setDefaultToPan(chartEl)
   }, [])
@@ -162,7 +161,7 @@ const Scatter = (props) => {
           },
           data: [
             {
-              type: 'line',
+              type: 'scatter',
               // mousemove: onMouseMove,
               toolTipContent: `<div class='tool-tip'><p>{pair[0]}-{pair[1]}</p><p>num_lots: {numLots}</p></div>`,
               // toolTipContent: `<div class='tool-tip'><p>r: {markerSize}</p><p>x: {x}</p></div><p>y: {y}</p></div>`,

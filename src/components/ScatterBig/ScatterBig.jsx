@@ -40,7 +40,9 @@ const ScatterBig = (props) => {
   useEffect(() => {
     const { updateRef, zoomOnScroll, setDefaultToPan } = props
     const chartEl = document.querySelector('#canvasjs-react-chart-container-7')
-    chartEl.addEventListener('wheel', (e) => zoomOnScroll(plotArbitBigRef, e))
+    chartEl.addEventListener('wheel', (e) =>
+      zoomOnScroll(plotArbitBigRef, e, global.viewport)
+    )
     setDefaultToPan(chartEl)
     console.log('Here')
   }, [document.querySelector('#canvasjs-react-chart-container-7')])
@@ -178,7 +180,7 @@ const ScatterBig = (props) => {
           },
           data: [
             {
-              type: 'line',
+              type: 'scatter',
               // mousemove: onMouseMove,
               toolTipContent: `<div class='tool-tip'><p>{pair[0]} - {pair[1]}</p><p>num_lots: {numLots}</p></div>`,
               fillOpacity: 0,
